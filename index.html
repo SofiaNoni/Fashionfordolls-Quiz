@@ -7,7 +7,7 @@
     <meta name="description" content="Discover your perfect OOAK fashion doll clothing style with our interactive quiz">
     <meta name="keywords" content="fashion doll, OOAK, clothing, quiz, style preferences">
     <!-- EmailJS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -125,50 +125,6 @@
             box-shadow: 0 8px 20px rgba(255, 107, 157, 0.4);
         }
 
-        .email-section {
-            background: linear-gradient(135deg, #ffeef8 0%, #f8f4ff 100%);
-            border: 2px solid #e9d5ff;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .email-section h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1.3em;
-        }
-
-        .email-section p {
-            color: #666;
-            margin-bottom: 15px;
-            font-size: 0.9em;
-        }
-
-        .email-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e9d5ff;
-            border-radius: 10px;
-            font-size: 1em;
-            margin-bottom: 10px;
-            background: white;
-            transition: border-color 0.3s ease;
-        }
-
-        .email-input:focus {
-            outline: none;
-            border-color: #ff6b9d;
-            box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.1);
-        }
-
-        .optional-text {
-            font-size: 0.8em;
-            color: #999;
-            font-style: italic;
-        }
-
         .submit-btn {
             background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #786fa6 100%);
             color: white;
@@ -194,11 +150,6 @@
             background: #ccc;
             cursor: not-allowed;
             transform: none;
-        }
-
-        .submit-btn.sending {
-            background: #999;
-            cursor: wait;
         }
 
         .results {
@@ -322,20 +273,56 @@
             background: #333;
         }
 
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #ff6b9d;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 10px;
+        .email-section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 2px solid #e9d5ff;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .email-section h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9d5ff;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-bottom: 10px;
+            transition: border-color 0.3s ease;
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: #ff6b9d;
+        }
+
+        .email-btn {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .email-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .email-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
 
         @media (max-width: 600px) {
@@ -569,14 +556,6 @@
                 </div>
             </div>
 
-            <!-- Email Collection Section -->
-            <div class="email-section">
-                <h3>📧 Get Personalized Recommendations</h3>
-                <p>Share your email to receive custom outfit suggestions based on your style preferences!</p>
-                <input type="email" id="userEmail" class="email-input" placeholder="Enter your email address">
-                <div class="optional-text">(Optional - but we'd love to keep you updated on new pieces!)</div>
-            </div>
-
             <button type="submit" class="submit-btn" id="submitBtn" disabled>✨ Complete Quiz ✨</button>
         </form>
 
@@ -584,6 +563,15 @@
             <h3>🎉 Thank you for sharing your style preferences!</h3>
             <p>Your responses help me create the perfect OOAK outfits for your fashion dolls. Here's your style profile:</p>
             <div id="resultsSummary"></div>
+            
+            <div class="email-section">
+                <h4>📧 Get Your Results by Email</h4>
+                <p style="margin-bottom: 15px; color: #666;">Enter your email to receive a copy of your quiz results and be notified when new outfits matching your style are available!</p>
+                <input type="email" id="userEmail" class="email-input" placeholder="your.email@example.com" required>
+                <input type="text" id="userName" class="email-input" placeholder="Your Name (optional)">
+                <button id="sendEmailBtn" class="email-btn">📧 Send Results to Email</button>
+            </div>
+            
             <div class="share-buttons">
                 <button class="share-btn" onclick="shareOnFacebook()">Share on Facebook</button>
                 <button class="share-btn twitter" onclick="shareOnTwitter()">Share on Twitter</button>
@@ -596,16 +584,16 @@
     </div>
 
     <script>
-        // EmailJS Configuration - REPLACE WITH YOUR ACTUAL VALUES
-        const EMAIL_CONFIG = {
-            serviceID: 'YOUR_SERVICE_ID',
-            templateID: 'YOUR_TEMPLATE_ID',
+        // EmailJS Configuration - REPLACE WITH YOUR ACTUAL CREDENTIALS
+        const EMAILJS_CONFIG = {
+            serviceId: 'YOUR_SERVICE_ID',
+            templateId: 'YOUR_TEMPLATE_ID',
             publicKey: 'YOUR_PUBLIC_KEY'
         };
 
         // Initialize EmailJS
         (function() {
-            emailjs.init(EMAIL_CONFIG.publicKey);
+            emailjs.init(EMAILJS_CONFIG.publicKey);
         })();
 
         // Store quiz responses
@@ -749,38 +737,80 @@
             }
 
             resultsSummary.innerHTML = resultsHTML;
-            return stylePreferences;
         }
 
         // Send email with quiz results
-        async function sendQuizResults(userEmail) {
-            try {
-                const stylePreferences = generateResults();
-                
-                // Prepare email data
-                const emailData = {
-                    user_email: userEmail || 'No email provided',
-                    quiz_date: new Date().toLocaleDateString(),
-                    quiz_time: new Date().toLocaleTimeString(),
-                    style_category: stylePreferences.q1.options[quizResponses.q1],
-                    color_palette: stylePreferences.q2.options[quizResponses.q2],
-                    detail_level: stylePreferences.q3.options[quizResponses.q3],
-                    fabric_preference: stylePreferences.q4.options[quizResponses.q4],
-                    accessory_importance: stylePreferences.q5.options[quizResponses.q5],
-                    price_range: stylePreferences.q6.options[quizResponses.q6],
-                    style_era: stylePreferences.q7.options[quizResponses.q7],
-                    purchase_frequency: stylePreferences.q8.options[quizResponses.q8]
-                };
+        function sendQuizResults() {
+            const userEmail = document.getElementById('userEmail').value;
+            const userName = document.getElementById('userName').value || 'Fashion Doll Enthusiast';
+            const sendBtn = document.getElementById('sendEmailBtn');
+            
+            if (!userEmail) {
+                showError('Please enter your email address.');
+                return;
+            }
 
-                // Send email
-                await emailjs.send(
-                    EMAIL_CONFIG.serviceID,
-                    EMAIL_CONFIG.templateID,
-                    emailData
-                );
+            if (!validateEmail(userEmail)) {
+                showError('Please enter a valid email address.');
+                return;
+            }
 
-                showSuccess('Quiz results sent successfully! Thank you for your participation.');
-                
-            } catch (error) {
-                console.error('Error sending email:', error);
-                show
+            // Disable button and show loading
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Sending...';
+            
+            // Format quiz results for email
+            const resultsText = formatResultsForEmail();
+            
+            // EmailJS template parameters
+            const templateParams = {
+                to_name: userName,
+                to_email: userEmail,
+                user_name: userName,
+                quiz_results: resultsText,
+                quiz_date: new Date().toLocaleDateString(),
+                quiz_time: new Date().toLocaleTimeString()
+            };
+
+            // Send email using EmailJS
+            emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, templateParams)
+                .then(function(response) {
+                    showSuccess('Quiz results sent successfully! Check your email.');
+                    sendBtn.textContent = '✓ Email Sent';
+                    sendBtn.style.background = '#4CAF50';
+                })
+                .catch(function(error) {
+                    console.error('EmailJS Error:', error);
+                    showError('Failed to send email. Please try again or contact support.');
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = '📧 Send Results to Email';
+                });
+        }
+
+        // Format results for email
+        function formatResultsForEmail() {
+            const stylePreferences = {
+                q1: {
+                    title: "Preferred Style Category",
+                    options: {
+                        lingerie: "Lingerie & Intimate Wear",
+                        casual: "Casual Modern",
+                        classic: "Classic Dresses",
+                        evening: "Evening Gowns",
+                        romantic: "Romantic Outfits"
+                    }
+                },
+                q2: {
+                    title: "Color Palette",
+                    options: {
+                        pastels: "Soft Pastels",
+                        jewel: "Rich Jewel Tones",
+                        neutral: "Neutral Elegance",
+                        bold: "Bold & Vibrant",
+                        monochrome: "Classic Monochrome"
+                    }
+                },
+                q3: {
+                    title: "Detail Level",
+                    options: {
+                        minimalist: "Clean
