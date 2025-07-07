@@ -551,6 +551,119 @@
             document.getElementById('progressFill').style.width = progress + '%';
         }
 
+        // Check if all questions are answered
+        function checkQuizComplete() {
+            const totalQuestions = 8;
+            const answeredQuestions = Object.keys(quizResponses).length;
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (answeredQuestions === totalQuestions) {
+                submitBtn.disabled = false;
+                submitBtn.style.background = 'linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #786fa6 100%)';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.style.background = '#ccc';
+            }
+        }
+
+        // Generate results based on responses
+        function generateResults() {
+            const resultsSummary = document.getElementById('resultsSummary');
+            let resultsHTML = '';
+
+            // Style Profile Analysis
+            const stylePreferences = {
+                q1: {
+                    title: "Preferred Style Category",
+                    options: {
+                        lingerie: "💋 Lingerie & Intimate Wear",
+                        casual: "👕 Casual Modern",
+                        classic: "👗 Classic Dresses",
+                        evening: "✨ Evening Gowns",
+                        romantic: "🌹 Romantic Outfits"
+                    }
+                },
+                q2: {
+                    title: "Color Palette",
+                    options: {
+                        pastels: "🌸 Soft Pastels",
+                        jewel: "💎 Rich Jewel Tones",
+                        neutral: "🤍 Neutral Elegance",
+                        bold: "🔥 Bold & Vibrant",
+                        monochrome: "🖤 Classic Monochrome"
+                    }
+                },
+                q3: {
+                    title: "Detail Level",
+                    options: {
+                        minimalist: "✨ Clean & Minimalist",
+                        moderate: "💫 Moderate Detail",
+                        elaborate: "🎭 Highly Detailed",
+                        mixed: "🌈 Mixed Approach"
+                    }
+                },
+                q4: {
+                    title: "Fabric Preference",
+                    options: {
+                        luxurious: "💎 Luxurious Fabrics",
+                        delicate: "🌸 Delicate Materials",
+                        textured: "🎨 Textured Fabrics",
+                        contemporary: "✨ Contemporary Blends"
+                    }
+                },
+                q5: {
+                    title: "Accessory Importance",
+                    options: {
+                        essential: "💍 Essential Complete Sets",
+                        some: "👜 Some Key Pieces",
+                        minimal: "✨ Minimal Accessories",
+                        flexible: "🌟 Flexible Approach"
+                    }
+                },
+                q6: {
+                    title: "Price Range",
+                    options: {
+                        budget: "💝 Budget-friendly ($15-30)",
+                        moderate: "💖 Moderate Range ($30-60)",
+                        premium: "💎 Premium Quality ($60-100)",
+                        collector: "👑 Collector's Piece ($100+)"
+                    }
+                },
+                q7: {
+                    title: "Style Era",
+                    options: {
+                        vintage: "🌹 Vintage Inspired",
+                        modern: "🏙️ Contemporary Modern",
+                        fantasy: "🦄 Fantasy & Fairytale",
+                        timeless: "⚡ Timeless Elegance"
+                    }
+                },
+                q8: {
+                    title: "Purchase Frequency",
+                    options: {
+                        monthly: "📅 Monthly Updates",
+                        seasonal: "🌸 Seasonal Purchases",
+                        special: "✨ Special Pieces Only",
+                        collector: "💎 Collector Mindset"
+                    }
+                }
+            };
+
+            // Generate results summary
+            for (const [questionKey, response] of Object.entries(quizResponses)) {
+                const preference = stylePreferences[questionKey];
+                if (preference) {
+                    resultsHTML += `
+                        <div class="result-item">
+                            <strong>${preference.title}:</strong> ${preference.options[response]}
+                        </div>
+                    `;
+                }
+            }
+
+            resultsSummary.innerHTML = resultsHTML;
+        }
+
         // Handle radio button changes
         document.querySelectorAll('input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', function() {
@@ -568,3 +681,76 @@
                 
                 // Update progress
                 updateProgress();
+                
+                // Check if quiz is complete
+                checkQuizComplete();
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            try {
+                // Validate all questions are answered
+                const totalQuestions = 8;
+                const answeredQuestions = Object.keys(quizResponses).length;
+                
+                if (answeredQuestions !== totalQuestions) {
+                    showError('Please answer all questions before submitting.');
+                    return;
+                }
+
+                // Generate and show results
+                generateResults();
+                
+                // Hide form and show results
+                document.getElementById('quizForm').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+                
+                // Show success message
+                showSuccess('Quiz completed successfully! Thank you for your responses.');
+                
+                // Scroll to results
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('Error submitting quiz:', error);
+                showError('An error occurred while submitting your quiz. Please try again.');
+            }
+        });
+
+        // Share functions
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent("I just completed a Fashion Doll Style Quiz! Find out your perfect OOAK doll clothing style too!");
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank');
+        }
+
+        function shareOnTwitter() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent("I just completed a Fashion Doll Style Quiz! Find out your perfect OOAK doll clothing style too! 👗✨");
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showSuccess('Link copied to clipboard!');
+            }).catch(() => {
+                showError('Failed to copy link. Please copy the URL manually.');
+            });
+        }
+
+        // Initialize quiz
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial progress
+            updateProgress();
+            
+            // Check initial state
+            checkQuizComplete();
+        });
+    </script>
+</body>
+</html>
+updated index.html with fixed codes
+                
